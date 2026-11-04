@@ -1,0 +1,391 @@
+<title>Jony Roy Portfolio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a big red PORTFOLIO word sits behind the page and fades as you scroll;
+   projects are an indexed list of rows (status, name, summary, tags, links), not cards. */
+:root {
+  color-scheme: dark;
+  --bg: #060606;
+  --ink: #f4eeec;
+  --muted: #a39995;
+  --line: rgba(255, 238, 232, 0.16);
+  --red: #ff2a14;
+  --red-deep: #4a0000;
+  --font-display: 'Anton', 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+  --font-body: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 16px/1.55 var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+a:focus-visible, button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.stage {
+  position: relative;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* Header */
+.top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px 24px;
+}
+.who { min-width: 0; }
+.name {
+  margin: 0;
+  font: 500 13px/1.4 var(--font-mono);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.tagline {
+  margin: 6px 0 0;
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: 1rem;
+}
+.gh {
+  font: 500 12px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--ink);
+  transition: color 0.15s, border-color 0.15s;
+}
+.gh:hover { color: var(--red); border-color: var(--red); }
+
+/* Background word */
+.word {
+  position: sticky;
+  top: 12px;
+  height: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--bgop, 1);
+}
+.word .frame {
+  position: absolute;
+  left: 0; right: 0; top: 20px;
+  display: flex;
+  justify-content: center;
+}
+.word svg {
+  display: block;
+  overflow: visible;
+  filter: drop-shadow(0 0 28px rgba(255, 30, 10, 0.28));
+}
+.word .wide { width: min(96vw, 1180px); height: auto; }
+.word .stack { display: none; width: 90vw; max-width: 560px; height: auto; }
+.hero-space { height: calc(min(96vw, 1180px) * 0.3 + 56px); }
+
+/* Controls */
+main { position: relative; z-index: 1; }
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding-bottom: 16px;
+}
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font: 500 12px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: rgba(6, 6, 6, 0.6);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.chip:hover { border-color: var(--red); }
+.chip[aria-pressed="true"] { background: var(--red); border-color: var(--red); color: #fff; }
+.count { font: 400 12px/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+/* Project index */
+.index { list-style: none; margin: 0; padding: 0; border-bottom: 1px solid var(--line); }
+.row {
+  display: grid;
+  grid-template-columns: 9rem minmax(0, 1fr) minmax(0, 14rem) auto;
+  gap: 8px 28px;
+  align-items: center;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+  background: linear-gradient(90deg, rgba(6, 6, 6, 0.72), rgba(6, 6, 6, 0.35));
+  transition: background 0.2s;
+}
+.row:hover { background: linear-gradient(90deg, rgba(255, 42, 20, 0.16), rgba(6, 6, 6, 0.35)); }
+
+.status {
+  display: flex; align-items: center; gap: 10px;
+  font: 500 12px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.dot { width: 10px; height: 10px; border-radius: 50%; flex: none; border: 2px solid var(--red); }
+.dot.built { background: var(--red); }
+.dot.progress { background: linear-gradient(90deg, var(--red) 50%, transparent 50%); }
+.dot.planned { border-style: dashed; }
+
+.main { min-width: 0; }
+.title {
+  margin: 0 0 6px;
+  font: 400 clamp(1.9rem, 4.6vw, 3.2rem)/1.02 var(--font-display);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.title a { text-decoration: none; display: inline-block; transition: color 0.15s, transform 0.2s; }
+.row:hover .title a { color: var(--red); transform: translateX(6px); }
+.desc { margin: 0; max-width: 58ch; color: var(--muted); }
+.kind { font: 400 12px/1 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+.tags { display: flex; flex-wrap: wrap; gap: 6px 12px; font: 400 12px/1.4 var(--font-mono); color: var(--muted); min-width: 0; }
+.links { display: flex; gap: 18px; }
+.links a, .links span {
+  font: 500 12px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 8px 0;
+}
+.links a { text-decoration: none; border-bottom: 1px solid var(--ink); transition: color 0.15s, border-color 0.15s; }
+.links a:hover { color: var(--red); border-color: var(--red); }
+.links span { color: var(--muted); }
+
+.empty { padding: 32px 0; color: var(--muted); }
+
+footer {
+  position: relative; z-index: 1;
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px;
+  padding-top: 24px;
+  font: 400 12px/1.4 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+footer a { color: var(--ink); }
+
+@media (max-width: 860px) {
+  .row { grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 22px 0; }
+  .links { padding-top: 4px; }
+}
+@media (max-width: 640px) {
+  .word .wide { display: none; }
+  .word .stack { display: block; }
+  .hero-space { height: calc(min(90vw, 560px) * 0.64 + 48px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+
+<div class="stage">
+  <h1 class="sr-only">Jony Roy, portfolio</h1>
+
+  <header class="top">
+    <div class="who">
+      <p class="name">Jony Roy</p>
+      <p class="tagline">First-year CSE student. I build web tools, Telegram bots and apps that make university life easier.</p>
+    </div>
+    <a class="gh" href="https://github.com/jony99jrn" target="_blank" rel="noopener">GitHub / jony99jrn</a>
+  </header>
+
+  <div class="word" id="word" aria-hidden="true">
+    <div class="frame">
+      <svg class="wide" viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" focusable="false">
+        <defs>
+          <linearGradient id="gw" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ff2a14"/>
+            <stop offset="0.5" stop-color="#e01808"/>
+            <stop offset="1" stop-color="#4a0000"/>
+          </linearGradient>
+        </defs>
+        <text x="500" y="282" text-anchor="middle" font-family="Anton, 'Bebas Neue', Impact, 'Arial Narrow', sans-serif" font-size="300" textLength="990" lengthAdjust="spacingAndGlyphs" fill="url(#gw)" stroke="rgba(255,236,230,0.6)" stroke-width="2">PORTFOLIO</text>
+      </svg>
+      <svg class="stack" viewBox="0 0 1000 640" xmlns="http://www.w3.org/2000/svg" focusable="false">
+        <defs>
+          <linearGradient id="gs" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ff2a14"/>
+            <stop offset="0.5" stop-color="#e01808"/>
+            <stop offset="1" stop-color="#4a0000"/>
+          </linearGradient>
+        </defs>
+        <g font-family="Anton, 'Bebas Neue', Impact, 'Arial Narrow', sans-serif" font-size="330" fill="url(#gs)" stroke="rgba(255,236,230,0.6)" stroke-width="2" text-anchor="middle">
+          <text x="500" y="300" textLength="792" lengthAdjust="spacingAndGlyphs">PORT</text>
+          <text x="500" y="620" textLength="990" lengthAdjust="spacingAndGlyphs">FOLIO</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="hero-space"></div>
+
+  <main>
+    <div class="bar">
+      <div class="filters" id="filters" role="group" aria-label="Filter projects by type"></div>
+      <span class="count" id="count" aria-live="polite"></span>
+    </div>
+    <ul class="index" id="index"></ul>
+  </main>
+
+  <footer>
+    <span>&copy; 2026 Jony Roy</span>
+    <a href="https://github.com/jony99jrn" target="_blank" rel="noopener">github.com/jony99jrn</a>
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   ADD YOUR PROJECTS HERE
+   One object per project. To add one, copy a line and edit it.
+   status: "built" | "progress" | "planned"
+   live / repo: a full https:// link, or leave as "" if none yet
+   ============================================================ */
+var PROJECTS = [
+  { name: "Tools By JRN", kind: "Hub", status: "built",
+    desc: "One home for my student utility tools. Each tool is its own deployment, listed from a single data array.",
+    tags: ["JavaScript", "Vercel"], live: "https://toolbyjrn.vercel.app", repo: "https://github.com/jony99jrn/ToolsByJRN" },
+
+  { name: "Telecloud", kind: "App", status: "progress",
+    desc: "Store coursework code with its question and pictures, then copy it in one click. Built for Android and Windows.",
+    tags: ["PWA", "Android", "Windows"], live: "https://cloudjrn.vercel.app", repo: "https://github.com/jony99jrn/telecloud" },
+
+  { name: "DIU Assignment Cover Page", kind: "Web tool", status: "built",
+    desc: "Fill in a short form and get a DIU assignment cover page.",
+    tags: ["HTML", "CSS"], live: "", repo: "https://github.com/jony99jrn/DIU-Assignment-Cover-Page" },
+
+  { name: "DIU Lab Report Cover Page", kind: "Web tool", status: "built",
+    desc: "The same idea for lab reports, built from the assignment cover page tool.",
+    tags: ["HTML", "CSS"], live: "", repo: "" },
+
+  { name: "Merge PDF", kind: "Web tool", status: "built",
+    desc: "Combine several PDF files into one document.",
+    tags: ["JavaScript", "PDF"], live: "", repo: "https://github.com/jony99jrn/merge.pdf" },
+
+  { name: "Image to PDF", kind: "Web tool", status: "built",
+    desc: "Turn photos and scans into a single PDF.",
+    tags: ["HTML", "PDF"], live: "", repo: "https://github.com/jony99jrn/image2pdf" },
+
+  { name: "PPTX to PDF", kind: "Web tool", status: "built",
+    desc: "Convert PowerPoint files to PDF instantly.",
+    tags: ["Vercel", "PDF"], live: "https://pptx2pdf.vercel.app", repo: "" },
+
+  { name: "PDF Compressor", kind: "Web tool", status: "progress",
+    desc: "Shrink the size of a PDF so it is easy to share.",
+    tags: ["JavaScript", "PDF"], live: "", repo: "" },
+
+  { name: "DIU Music Player", kind: "App", status: "built",
+    desc: "A music player that plays a YouTube playlist.",
+    tags: ["HTML", "YouTube"], live: "https://diumusic.vercel.app", repo: "https://github.com/jony99jrn/diu" },
+
+  { name: "Class Routine Reminder Bot", kind: "Bot", status: "progress",
+    desc: "Telegram bot that reads the class routine from a Google Sheet and sends a reminder at 11 PM.",
+    tags: ["Telegram", "Google Sheets", "GitHub Actions"], live: "", repo: "" },
+
+  { name: "DIU Class Materials Bot", kind: "Bot", status: "progress",
+    desc: "Telegram bot (@diu_drive_bot) that keeps lecturer slides and PDFs sorted by department, semester and course code.",
+    tags: ["Telegram", "Bot"], live: "", repo: "" }
+];
+
+(function () {
+  var STATUS = { built: "Built", progress: "In progress", planned: "Planned" };
+  var current = "All";
+  var list = document.getElementById("index");
+  var filters = document.getElementById("filters");
+  var count = document.getElementById("count");
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function link(href, label) {
+    return '<a href="' + esc(href) + '" target="_blank" rel="noopener">' + label + ' &#8599;</a>';
+  }
+
+  function row(p) {
+    var main = p.live || p.repo;
+    var title = main
+      ? '<a href="' + esc(main) + '" target="_blank" rel="noopener">' + esc(p.name) + '</a>'
+      : '<a>' + esc(p.name) + '</a>';
+    var links = "";
+    if (p.live) links += link(p.live, "Live");
+    if (p.repo) links += link(p.repo, "Code");
+    if (!links) links = "<span>Link soon</span>";
+    var tags = (p.tags || []).map(function (t) { return "<span>" + esc(t) + "</span>"; }).join("");
+    return '<li class="row">' +
+      '<div class="status"><span class="dot ' + esc(p.status) + '"></span>' + esc(STATUS[p.status] || p.status) + '</div>' +
+      '<div class="main"><h2 class="title">' + title + '</h2><p class="desc">' + esc(p.desc) + '</p></div>' +
+      '<div class="tags"><span class="kind">' + esc(p.kind) + '</span>' + tags + '</div>' +
+      '<div class="links">' + links + '</div>' +
+      '</li>';
+  }
+
+  function render() {
+    var shown = PROJECTS.filter(function (p) { return current === "All" || p.kind === current; });
+    list.innerHTML = shown.length ? shown.map(row).join("") : '<li class="empty">No projects of this type yet.</li>';
+    count.textContent = current === "All" ? PROJECTS.length + " projects" : shown.length + " of " + PROJECTS.length + " projects";
+    Array.prototype.forEach.call(filters.children, function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-kind") === current));
+    });
+  }
+
+  var kinds = ["All"];
+  PROJECTS.forEach(function (p) { if (kinds.indexOf(p.kind) < 0) kinds.push(p.kind); });
+  filters.innerHTML = kinds.map(function (k) {
+    return '<button type="button" class="chip" data-kind="' + esc(k) + '" aria-pressed="false">' + esc(k) + '</button>';
+  }).join("");
+  filters.addEventListener("click", function (e) {
+    var b = e.target.closest(".chip");
+    if (!b) return;
+    current = b.getAttribute("data-kind");
+    render();
+  });
+  render();
+
+  /* The PORTFOLIO word starts at full strength and dims as the list scrolls over it. */
+  var word = document.getElementById("word");
+  var ticking = false;
+  function fade() {
+    ticking = false;
+    var space = document.querySelector(".hero-space");
+    var range = Math.max(160, (space ? space.offsetHeight : 300));
+    var y = window.scrollY || window.pageYOffset || 0;
+    var op = Math.max(0.16, 1 - y / range);
+    word.style.setProperty("--bgop", op.toFixed(3));
+  }
+  window.addEventListener("scroll", function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(fade); }
+  }, { passive: true });
+  window.addEventListener("resize", fade);
+  fade();
+})();
+</script>
