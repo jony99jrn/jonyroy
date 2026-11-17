@@ -1,17 +1,425 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#08090d" />
-    <meta name="description" content="Jony Roy — Computer Science student and aspiring software developer." />
-    <title>Jony Roy — Developer Portfolio</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Jony Roy Portfolio</title>
+<link rel="icon" href="data:,">
+<meta name="description" content="Portfolio of Jony Roy, a first-year CSE student building practical web tools, apps and Telegram bots.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* Colours for the Sakuga controls: a page's own :root wins over their defaults. */
+  :root {
+    --bg: #FAF3E1;
+    --paper: #FFFBEF;
+    --surface: #F5E7C6;
+    --ink: #222222;
+    --dim: #5E513B;
+    --orange: #FA8112;
+    --shade: #E4C98C;
+
+    --sk-ink: var(--ink);
+    --sk-card: var(--paper);
+    --sk-pri: var(--orange);
+    --sk-pri-ink: var(--ink);
+    --sk-on-pri: var(--ink);
+    --sk-acc: var(--orange);
+    --sk-soft: var(--shade);
+    --sk-dim: var(--dim);
+    --sk-track: #E8D8B0;
+  }
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body { overflow-x: clip; }   /* the buttons' burst canvas reaches 160px past their edges; don't let it widen the page on phones */
+  body {
+    margin: 0; color: var(--ink); background: var(--bg);
+    background-image: radial-gradient(rgba(34,34,34,.09) 1.1px, transparent 1.2px);
+    background-size: 18px 18px;
+    font: 400 16px/1.6 Manrope, "Segoe UI", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  html.loading, html.loading body { overflow: hidden; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; border-radius: 6px; }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--bg); }
+  .skip { position: absolute; left: 12px; top: -60px; background: var(--ink); color: var(--paper); padding: 8px 14px; border-radius: 8px; z-index: 100; }
+  .skip:focus { top: 12px; }
+  .wrap { width: min(1080px, 100% - 32px); margin-inline: auto; }
+
+  /* ---------- loader ---------- */
+  #loader {
+    position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; align-content: center; gap: 4px;
+    background: var(--bg); transition: opacity .5s ease, visibility .5s;
+  }
+  #loader.gone { opacity: 0; visibility: hidden; }
+  #loader .mark { font: 800 clamp(44px, 12vw, 84px)/1 Manrope, sans-serif; letter-spacing: -.04em; }
+  #loader .mark b { color: var(--orange); -webkit-text-stroke: 3px var(--ink); }
+  #loader .sub { color: var(--dim); font-weight: 600; margin-bottom: 18px; }
+
+  /* ---------- header ---------- */
+  header.site { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: rgba(250,243,225,.92); backdrop-filter: blur(8px); border-bottom: 3px solid var(--ink); }
+  header.site .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; flex-wrap: wrap; }
+  .brand { font-weight: 800; font-size: 22px; text-decoration: none; letter-spacing: -.03em; }
+  .brand span { color: var(--orange); -webkit-text-stroke: 1.5px var(--ink); }
+  nav { display: flex; gap: 4px; overflow-x: auto; }
+  nav a { text-decoration: none; font-weight: 700; font-size: 14px; padding: 6px 12px; border-radius: 999px; border: 2px solid transparent; white-space: nowrap; }
+  nav a:hover { border-color: var(--ink); background: var(--paper); }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 72px 0 56px; }
+  .hero .wrap { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
+  .eyebrow { display: inline-block; font: 800 13px/1 Manrope, sans-serif; text-transform: uppercase; letter-spacing: .12em; background: var(--surface); border: 2px solid var(--ink); border-radius: 999px; padding: 8px 14px; }
+  h1 { font-size: clamp(44px, 8vw, 84px); line-height: .98; letter-spacing: -.045em; font-weight: 800; margin: 20px 0 18px; }
+  h1 em { font-style: normal; color: var(--orange); -webkit-text-stroke: 3px var(--ink); paint-order: stroke fill; }
+  .lede { font-size: 19px; color: var(--dim); max-width: 34em; margin: 0 0 30px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; padding-top: 30px; margin-top: -30px; }
+  .stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 34px; }
+  .stat { font-weight: 700; font-size: 14px; border: 2px solid var(--ink); border-radius: 12px; padding: 6px 12px; background: var(--paper); }
+  .panel {
+    background: var(--ink); color: #FFF5DA; border: 3px solid var(--ink); border-radius: 18px; box-shadow: 8px 9px 0 var(--orange);
+    padding: 0; font: 500 15px/1.75 "JetBrains Mono", ui-monospace, Consolas, monospace; transform: rotate(1.6deg);
+  }
+  .panel .bar { display: flex; gap: 7px; padding: 12px 16px; border-bottom: 2px solid #444; }
+  .panel .bar i { width: 11px; height: 11px; border-radius: 50%; background: #666; }
+  .panel .bar i:first-child { background: var(--orange); }
+  .panel pre { margin: 0; padding: 18px 20px 22px; overflow-x: auto; }
+  .k { color: #FFB45C; } .s { color: #C8E6A0; } .c { color: #9a9078; }
+
+  /* ---------- sections ---------- */
+  section { padding: 64px 0; scroll-margin-top: 70px; }
+  h2 { font-size: clamp(30px, 5vw, 46px); letter-spacing: -.035em; line-height: 1.05; margin: 0 0 8px; font-weight: 800; }
+  h2::after { content: ""; display: block; width: 64px; height: 8px; background: var(--orange); border: 2px solid var(--ink); border-radius: 99px; margin-top: 12px; }
+  .section-sub { color: var(--dim); margin: 14px 0 32px; max-width: 40em; }
+  .card {
+    background: var(--paper); border: 3px solid var(--ink); border-radius: 18px; box-shadow: 6px 7px 0 var(--shade);
+    padding: 24px; transition: transform .15s ease, box-shadow .15s ease;
+  }
+
+  /* about */
+  .about { display: grid; grid-template-columns: 1.4fr 1fr; gap: 28px; align-items: start; }
+  .about p { margin: 0 0 14px; }
+  .facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .facts li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 2px dashed var(--shade); padding-bottom: 10px; font-weight: 600; }
+  .facts li:last-child { border: 0; padding: 0; }
+  .facts span { color: var(--dim); font-weight: 600; }
+
+  /* projects */
+  .toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 28px; margin-bottom: 26px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 28px; }
+  .project { display: flex; flex-direction: column; gap: 12px; }
+  .project:hover { transform: translate(-2px, -2px); box-shadow: 9px 10px 0 var(--shade); }
+  .tag { align-self: flex-start; font: 800 11px/1 Manrope, sans-serif; letter-spacing: .1em; text-transform: uppercase; background: var(--orange); border: 2px solid var(--ink); border-radius: 999px; padding: 6px 10px; }
+  .project h3 { margin: 0; font-size: 22px; letter-spacing: -.02em; line-height: 1.15; }
+  .project p { margin: 0; color: var(--dim); flex: 1; }
+  .chips, .links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-weight: 700; font-size: 12px; border: 2px solid var(--ink); border-radius: 999px; padding: 2px 10px; background: var(--surface); }
+  .link { font-weight: 800; font-size: 14px; text-decoration: none; border: 2px solid var(--ink); border-radius: 10px; padding: 6px 12px; background: var(--paper); box-shadow: 3px 3px 0 var(--ink); transition: transform .1s, box-shadow .1s; }
+  .link:hover { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); background: var(--orange); }
+  .empty { grid-column: 1 / -1; text-align: center; font-weight: 700; color: var(--dim); padding: 28px; }
+
+  /* skills */
+  .skills { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 28px; }
+  .skills h3 { margin: 0 0 14px; font-size: 18px; }
+  .skill { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 2px dashed var(--shade); font-weight: 700; }
+  .skill:last-child { border: 0; }
+  .skill > span { line-height: 36px; }
+  .skill sakuga-tooltip { margin-top: -56px; }  /* the tooltip reserves room above for its hint; pull the row back together */
+
+  /* contact */
+  .contact { text-align: center; background: var(--surface); }
+  .contact h2::after { margin-inline: auto; }
+  .contact .section-sub { margin-inline: auto; }
+  .contact .cta { justify-content: center; padding-top: 0; margin-top: 0; }
+  .plain { margin: 26px 0 0; font-weight: 700; }
+  .rate { margin-top: 28px; display: grid; justify-items: center; gap: 4px; }
+  .rate p { margin: 0; font-weight: 800; }
+
+  footer { padding: 36px 0 90px; text-align: center; color: var(--dim); font-size: 14px; font-weight: 600; }
+  footer a { font-weight: 800; }
+
+  .reveal { transform: translateY(18px); transition: transform .6s ease; }
+  .reveal.in { transform: none; }
+
+  @media (max-width: 860px) {
+    .hero { padding-top: 44px; }
+    .hero .wrap, .about { grid-template-columns: 1fr; }
+    .hero .wrap { gap: 40px; }
+    .panel { transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { transform: none; transition: none; }
+    #loader { transition: none; }
+  }
+</style>
+<script>document.documentElement.classList.add("loading")</script>
+<a class="skip" href="#main">Skip to content</a>
+
+<div id="loader" role="status" aria-live="polite">
+  <div class="mark">J<b>R</b>N</div>
+  <div class="sub">Setting up the portfolio…</div>
+  <sakuga-progress id="bar" label="Loading portfolio"></sakuga-progress>
+</div>
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="#home">Jony<span>.</span>Roy</a>
+    <nav aria-label="Main">
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="hero" id="home">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow">First-year CSE student</span>
+        <h1>Hi, I'm <em>Jony</em>. I build useful web things.</h1>
+        <p class="lede">I make practical tools, apps and bots for students: small, fast and easy to use. I'm learning by shipping, one project at a time.</p>
+        <div class="cta">
+          <sakuga-button id="viewWork">See my work</sakuga-button>
+          <sakuga-button id="openGithub" variant="secondary">GitHub</sakuga-button>
+        </div>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="panel" aria-hidden="true">
+        <div class="bar"><i></i><i></i><i></i></div>
+<pre><span class="c">// jony.js</span>
+<span class="k">const</span> jony = {
+  year: <span class="s">"1st, CSE"</span>,
+  building: <span class="s">"web tools"</span>,
+  stack: [<span class="s">"HTML"</span>, <span class="s">"CSS"</span>, <span class="s">"JS"</span>],
+  github: <span class="s">"jony99jrn"</span>,
+};</pre>
+      </div>
+    </div>
+  </div>
+
+  <section id="about">
+    <div class="wrap">
+      <h2 class="reveal">About me</h2>
+      <p class="section-sub reveal">The short version.</p>
+      <div class="about">
+        <div class="card reveal">
+          <p>I'm Jony, a computer science and engineering student in my first year. Alongside my classes I build web projects that solve real problems for my classmates: cover page generators, a PDF merger, a place to keep coursework code, and Telegram bots.</p>
+          <p>I like plain HTML, CSS and JavaScript, shipping early, and fixing things based on what people actually use.</p>
+        </div>
+        <div class="card reveal">
+          <ul class="facts">
+            <li><span>Studying</span> Computer Science (CSE)</li>
+            <li><span>Year</span> First</li>
+            <li><span>Focus</span> Web development</li>
+            <li><span>GitHub</span> jony99jrn</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="wrap">
+      <h2 class="reveal">Projects</h2>
+      <p class="section-sub reveal">Things I've built. Filter by type or search by name.</p>
+      <div class="toolbar reveal">
+        <sakuga-tabs id="filter" label="Project type">
+          <option value="all">All</option>
+          <option value="Web app">Web apps</option>
+          <option value="Tool">Tools</option>
+          <option value="Bot">Bots</option>
+        </sakuga-tabs>
+        <sakuga-input id="search" label="Search projects" type="search" placeholder="Search projects"></sakuga-input>
+      </div>
+      <div class="grid" id="grid" role="tabpanel" aria-label="Projects"></div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="wrap">
+      <h2 class="reveal">Skills</h2>
+      <p class="section-sub reveal">Tap the <b>?</b> next to a skill to see where I've used it.</p>
+      <div class="skills" id="skills-grid"></div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <div class="card contact reveal">
+        <h2>Let's build something</h2>
+        <p class="section-sub">Want to see more of my work, or have an idea for a student tool? My code lives on GitHub.</p>
+        <div class="cta" id="contact-cta">
+          <sakuga-button id="contactGithub">Visit my GitHub</sakuga-button>
+          <sakuga-button id="copyGithub" variant="secondary">Copy link</sakuga-button>
+        </div>
+        <p class="plain"><a href="https://github.com/jony99jrn" target="_blank" rel="noopener">github.com/jony99jrn</a></p>
+        <div class="rate">
+          <p id="rate-label">Enjoyed the site? Rate it</p>
+          <sakuga-rating id="rating" label="Rate this portfolio"></sakuga-rating>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>© 2026 Jony Roy. Effects by <a href="https://github.com/finktheartist/sakuga-vfx" target="_blank" rel="noopener">Sakuga VFX</a> (MIT).</p>
+  </div>
+</footer>
+
+<sakuga-toast id="toast" style="position: fixed; left: 16px; bottom: 16px; z-index: 30" duration="2.2"></sakuga-toast>
+
+<script src="sakuga/button.js"></script>
+<script src="sakuga/progress.js"></script>
+<script src="sakuga/tabs.js"></script>
+<script src="sakuga/input.js"></script>
+<script src="sakuga/tooltip.js"></script>
+<script src="sakuga/rating.js"></script>
+<script src="sakuga/toast.js"></script>
+<script>
+/* ============================================================
+   Content lives here. Edit this block to change the site.
+   ============================================================ */
+const GITHUB = 'https://github.com/jony99jrn';
+const EMAIL = '';   // optional: put your email here to add an "Email me" button
+
+const projects = [
+  { title: 'Tools By JRN', type: 'Web app',
+    desc: 'A directory hub that links out to my student tools, built as one self-contained page with no build step.',
+    tech: ['HTML', 'CSS', 'JavaScript', 'Vercel'],
+    links: [['Live', 'https://toolsbyjrn.vercel.app'], ['Code', 'https://github.com/jony99jrn/ToolsByJRN']] },
+  { title: 'Code Vault', type: 'Web app',
+    desc: 'A personal library for my coursework code: the question, optional pictures, a full-screen code view and one-click copy. Works on Android and Windows.',
+    tech: ['JavaScript', 'Supabase', 'Vercel'],
+    links: [['Live', 'https://cloudjrn.vercel.app'], ['Code', 'https://github.com/jony99jrn/cloudjrn']] },
+  { title: 'DIU Music Player', type: 'Web app',
+    desc: 'A music player web app powered by YouTube playlists.',
+    tech: ['JavaScript', 'YouTube playlists', 'Vercel'],
+    links: [['Live', 'https://diumusic.vercel.app'], ['Code', 'https://github.com/jony99jrn/diu']] },
+  { title: 'DIU Cover Page', type: 'Tool',
+    desc: 'Generates assignment cover pages for students, with a clean UI. A lab report version is part of the same toolkit.',
+    tech: ['HTML', 'CSS', 'JavaScript', 'Vercel'],
+    links: [['Live', 'https://diu-cover-page-omega.vercel.app']] },
+  { title: 'Merge PDF', type: 'Tool',
+    desc: 'A simple tool for merging PDF files into one.',
+    tech: ['JavaScript', 'Vercel'],
+    links: [['Live', 'https://merge-pdf-two.vercel.app']] },
+  { title: 'Class Routine Bot', type: 'Bot',
+    desc: 'A Telegram bot that reads the class routine from a Google Sheet and sends a reminder every night at 11 PM.',
+    tech: ['Telegram', 'Google Sheets', 'GitHub Actions', 'Vercel'],
+    links: [] },
+  { title: 'DIU Class Materials', type: 'Bot',
+    desc: 'A Telegram bot for keeping lecturer slides and PDFs organised by department, semester and course code.',
+    tech: ['Telegram'],
+    links: [['Open bot', 'https://t.me/diu_drive_bot']] },
+];
+
+const skills = [
+  { group: 'Front end', items: [
+    ['HTML', 'Used in every site and tool I have built.'],
+    ['CSS', 'Responsive layouts and themes across my projects, including this one.'],
+    ['JavaScript', 'The main language behind my web apps, tools and bots.'] ] },
+  { group: 'Back end & cloud', items: [
+    ['Supabase', 'Used for login and storage in Code Vault.'],
+    ['Vercel', 'Where I deploy most of my projects.'],
+    ['GitHub Actions', 'Runs the nightly reminder for my routine bot.'] ] },
+  { group: 'Other', items: [
+    ['Telegram bots', 'Class Routine Bot and DIU Class Materials.'],
+    ['Git & GitHub', 'Version control and hosting for all my code.'],
+    ['C', 'What I use for my programming labs at university.'] ] },
+];
+
+/* ============================================================
+   Page logic
+   ============================================================ */
+const $ = (s, el = document) => el.querySelector(s);
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const toast = $('#toast');
+const say = (msg) => { try { toast.show(msg); } catch (e) { /* component not loaded */ } };
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/* loader */
+const loader = $('#loader');
+let loaderClosed = false;
+function closeLoader() {
+  if (loaderClosed) return; loaderClosed = true;
+  loader.classList.add('gone'); document.documentElement.classList.remove('loading');
+  setTimeout(() => loader.remove(), 700);
+}
+(async function runLoader() {
+  const bar = $('#bar');
+  if (reduced || typeof bar.set !== 'function') return closeLoader();
+  bar.addEventListener('sakuga:done', async () => { await wait(500); closeLoader(); });
+  const steps = [[150, .25], [350, .55], [450, .72], [400, .9], [300, 1]];
+  for (const [ms, v] of steps) { await wait(ms); bar.set(v); }
+})();
+setTimeout(closeLoader, 7000);   // safety net
+
+/* stats */
+$('#stats').innerHTML =
+  `<span class="stat">${projects.length} projects</span><span class="stat">1st-year CSE</span><span class="stat">HTML · CSS · JS</span>`;
+
+/* projects */
+const grid = $('#grid');
+let type = 'all', query = '';
+function renderProjects() {
+  const q = query.trim().toLowerCase();
+  const list = projects.filter((p) =>
+    (type === 'all' || p.type === type) &&
+    (!q || (p.title + ' ' + p.desc + ' ' + p.tech.join(' ')).toLowerCase().includes(q)));
+  grid.innerHTML = list.length ? list.map((p) => `
+    <article class="card project">
+      <span class="tag">${p.type}</span>
+      <h3>${p.title}</h3>
+      <p>${p.desc}</p>
+      <div class="chips">${p.tech.map((t) => `<span class="chip">${t}</span>`).join('')}</div>
+      ${p.links.length ? `<div class="links">${p.links.map(([l, u]) => `<a class="link" href="${u}" target="_blank" rel="noopener">${l} ↗</a>`).join('')}</div>` : ''}
+    </article>`).join('') : '<p class="empty">No projects match that. Try another word.</p>';
+}
+$('#filter').addEventListener('change', (e) => { type = e.detail.value; renderProjects(); });
+$('#search').addEventListener('input', (e) => { query = e.target.value || ''; renderProjects(); });
+renderProjects();
+
+/* skills */
+$('#skills-grid').innerHTML = skills.map((g) => `
+  <div class="card reveal">
+    <h3>${g.group}</h3>
+    ${g.items.map(([n, hint]) => `<div class="skill"><span>${n}</span><sakuga-tooltip text="${hint}" label="Where I use ${n}">?</sakuga-tooltip></div>`).join('')}
+  </div>`).join('');
+
+/* buttons */
+const go = (sel) => setTimeout(() => $(sel).scrollIntoView({ behavior: reduced ? 'auto' : 'smooth' }), reduced ? 0 : 450);
+$('#viewWork').addEventListener('click', () => go('#projects'));
+const openGithub = () => { if (!window.open(GITHUB, '_blank', 'noopener')) say('github.com/jony99jrn'); };
+$('#openGithub').addEventListener('click', openGithub);
+$('#contactGithub').addEventListener('click', openGithub);
+$('#copyGithub').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(GITHUB); say('GitHub link copied!'); }
+  catch (e) { say('Press Ctrl+C to copy'); }
+});
+if (EMAIL) {
+  const b = document.createElement('sakuga-button');
+  b.textContent = 'Email me';
+  b.addEventListener('click', () => { location.href = 'mailto:' + EMAIL; });
+  $('#contact-cta').prepend(b);
+}
+
+/* rating */
+$('#rating').addEventListener('change', (e) => {
+  const n = +e.target.value;
+  say(n ? `Thanks for ${n} star${n > 1 ? 's' : ''}!` : 'Rating cleared');
+});
+
+/* scroll reveal */
+const reveals = document.querySelectorAll('.reveal');
+if ('IntersectionObserver' in window && !reduced) {
+  const io = new IntersectionObserver((entries) => entries.forEach((en) => {
+    if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+  }), { threshold: .12 });
+  reveals.forEach((el) => io.observe(el));
+} else reveals.forEach((el) => el.classList.add('in'));
+</script>
+
+</body></html>
